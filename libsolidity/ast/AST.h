@@ -656,6 +656,46 @@ private:
 	ASTPointer<TypeName> m_typeName;
 };
 
+/**
+ * `type CustomType is uint;` will create a custom type, that is effectively same as `uint`, but
+ * with stricter conversion rules.
+ * TODO improve this documentation
+ */
+class UserDefinedValueType: public Declaration, StructurallyDocumented
+{
+public:
+	UserDefinedValueType(
+		int64_t _id,
+		SourceLocation const& _location,
+		ASTPointer<StructuredDocumentation> _documentation,
+		ASTPointer<ASTString> _userDefinedValueTypeName,
+		SourceLocation _nameLocation,
+		ASTPointer<TypeName> _typeName
+	):
+		Declaration(_id, _location, _userDefinedValueTypeName, std::move(_nameLocation), Visibility::Default),
+		StructurallyDocumented(std::move(_documentation)),
+		m_userDefinedValueTypeName(_userDefinedValueTypeName),
+		m_typeName(std::move(_typeName))
+	{
+		solAssert(m_userDefinedValueTypeName != nullptr, "Name cannot be null.");
+	}
+
+	void accept(ASTVisitor& _visitor) override;
+	void accept(ASTConstVisitor& _visitor) const override;
+
+	Type const* type() const override;
+
+	ASTString const& userDefinedValueTypeName() const { return *m_userDefinedValueTypeName; }
+	/// TODO change the name to valuetypename?
+	/// TODO add documentation
+	TypeName const* typeName() const { return m_typeName.get(); }
+
+private:
+	ASTPointer<ASTString> m_userDefinedValueTypeName;
+	ASTPointer<TypeName> m_typeName;
+};
+
+
 class StructDefinition: public Declaration, public ScopeOpener
 {
 public:

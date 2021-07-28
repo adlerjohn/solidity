@@ -97,6 +97,8 @@ class Identifier;
 class ElementaryTypeNameExpression;
 class Literal;
 class StructuredDocumentation;
+// TODO put this at the right place
+class UserDefinedValueType;
 
 class VariableScope;
 
