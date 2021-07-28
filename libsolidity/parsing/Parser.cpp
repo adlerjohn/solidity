@@ -134,6 +134,13 @@ ASTPointer<SourceUnit> Parser::parse(CharStream& _charStream)
 					nodes.push_back(parseVariableDeclaration(options));
 					expectToken(Token::Semicolon);
 				}
+				// TODO can we skip the lookahead?
+				else if (
+					m_scanner->currentToken() == Token::Type &&
+					m_scanner->peekNextToken() == Token::Identifier &&
+					m_scanner->peekNextNextToken() == Token::Is
+				)
+					nodes.push_back(parseUserDefinedValueType());
 				else
 					fatalParserError(7858_error, "Expected pragma, import directive or contract/interface/library/struct/enum/constant/function definition.");
 			}
@@ -386,6 +393,13 @@ ASTPointer<ContractDefinition> Parser::parseContractDefinition()
 				subNodes.push_back(parseEventDefinition());
 			else if (currentTokenValue == Token::Using)
 				subNodes.push_back(parseUsingDirective());
+			// TODO can we skip the lookahead?
+			else if (
+				currentTokenValue == Token::Type &&
+				m_scanner->peekNextToken() == Token::Identifier &&
+				m_scanner->peekNextNextToken() == Token::Is
+			)
+				subNodes.push_back(parseUserDefinedValueType());
 			else
 				fatalParserError(9182_error, "Function, variable, struct or modifier declaration expected.");
 		}
@@ -1009,6 +1023,25 @@ ASTPointer<UserDefinedTypeName> Parser::parseUserDefinedTypeName()
 	nodeFactory.setEndPositionFromNode(identifierPath);
 	return nodeFactory.createNode<UserDefinedTypeName>(identifierPath);
 }
+
+ASTPointer<UserDefinedValueType> Parser::parseUserDefinedValueType()
+{
+	ASTNodeFactory nodeFactory(*this);
+	ASTPointer<StructuredDocumentation> documentation = parseStructuredDocumentation();
+	expectToken(Token::Type);
+	auto&& [userDefinedValueTypeName, nameLocation] = expectIdentifierWithLocation();
+	expectToken(Token::Is);
+	ASTPointer<TypeName> typeName = parseTypeName();
+	nodeFactory.markEndPosition();
+	expectToken(Token::Semicolon);
+	return nodeFactory.createNode<UserDefinedValueType>(
+		documentation,
+		userDefinedValueTypeName,
+		nameLocation,
+		typeName
+	);
+}
+
 
 ASTPointer<IdentifierPath> Parser::parseIdentifierPath()
 {

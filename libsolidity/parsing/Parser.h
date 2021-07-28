@@ -108,6 +108,7 @@ private:
 	ASTPointer<Identifier> parseIdentifier();
 	ASTPointer<Identifier> parseIdentifierOrAddress();
 	ASTPointer<UserDefinedTypeName> parseUserDefinedTypeName();
+	ASTPointer<UserDefinedValueType> parseUserDefinedValueType();
 	ASTPointer<IdentifierPath> parseIdentifierPath();
 	ASTPointer<TypeName> parseTypeNameSuffix(ASTPointer<TypeName> type, ASTNodeFactory& nodeFactory);
 	ASTPointer<TypeName> parseTypeName();
