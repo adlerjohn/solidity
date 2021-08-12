@@ -1471,11 +1471,15 @@ public:
 	UserDefinedValueType const& userDefinedValueType() const { return m_userDefinedValueType; }
 
 	TypeResult binaryOperatorResult(Token, Type const*) const override { return nullptr; }
+	Type const* encodingType() const override { return &m_actualType; }
+	TypeResult interfaceType(bool /* _inLibrary */) const override {return &m_actualType; }
 	std::string richIdentifier() const override;
 	bool operator==(Type const& _other) const override;
 	// TODO check this
 	bool canBeStored() const override { return true;}
 	u256 storageSize() const override;
+
+	// TODO nameable, isValueType, leftAligned
 
 	/// TODO
 	bool hasSimpleZeroValueInMemory() const override { return true; }
