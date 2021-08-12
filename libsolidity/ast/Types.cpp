@@ -3790,12 +3790,7 @@ bool UserDefinedValueTypeType::operator==(Type const& _other) const
 	if (_other.category() != category())
 		return false;
 	UserDefinedValueTypeType const& other = dynamic_cast<UserDefinedValueTypeType const&>(_other);
-	// TODO we also need to check for the definition
-	if (actualType() == other.actualType())
-		return false;
-
-	// TODO maybe only this check is necessary?
-	return other.userDefinedValueType().userDefinedValueTypeName() == m_userDefinedValueType.userDefinedValueTypeName();
+	return other.userDefinedValueType() == userDefinedValueType();
 }
 
 u256 UserDefinedValueTypeType::storageSize() const

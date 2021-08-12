@@ -1476,8 +1476,11 @@ public:
 	std::string richIdentifier() const override;
 	bool operator==(Type const& _other) const override;
 	// TODO check this
-	bool canBeStored() const override { return true;}
+	bool canBeStored() const override { return true; }
 	u256 storageSize() const override;
+	bool isValueType() const override { return true; }
+	bool nameable() const override { return true; }
+
 
 	// TODO nameable, isValueType, leftAligned
 
