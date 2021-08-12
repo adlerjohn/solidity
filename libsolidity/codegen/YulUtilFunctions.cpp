@@ -3431,6 +3431,15 @@ string YulUtilFunctions::conversionFunction(Type const& _from, Type const& _to)
 			body = "converted := value";
 			break;
 		}
+		case Type::Category::UserDefinedValueTypeType:
+		{
+			auto& userDefinedValueTypeType = dynamic_cast<UserDefinedValueTypeType const&>(_from);
+			Type const* encodingType = userDefinedValueTypeType.encodingType();
+			solAssert(encodingType, "");
+			solAssert(_from == _to || *encodingType == _to, "");
+			body = "converted := value";
+			break;
+		}
 		default:
 			solAssert(false, "Invalid conversion from " + _from.canonicalName() + " to " + _to.canonicalName());
 		}
