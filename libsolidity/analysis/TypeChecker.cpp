@@ -3405,6 +3405,22 @@ void TypeChecker::endVisit(UsingForDirective const& _usingFor)
 		);
 }
 
+void TypeChecker::endVisit(UserDefinedValueType const& _userDefinedValueType)
+{
+	solAssert(_userDefinedValueType.typeName(), "");
+	Type const* type = _userDefinedValueType.typeName()->annotation().type;
+	solAssert(type, "");
+	// TODO rewrite the error message
+	if (!type->isValueType())
+		m_errorReporter.typeError(
+			8129_error,
+			_userDefinedValueType.location(),
+			"The user defined type \"" +
+			_userDefinedValueType.userDefinedValueTypeName() +
+			"\" can only be defined on value types."
+		);
+}
+
 void TypeChecker::checkErrorAndEventParameters(CallableDeclaration const& _callable)
 {
 	string kind = dynamic_cast<EventDefinition const*>(&_callable) ? "event" : "error";
