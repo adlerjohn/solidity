@@ -3780,6 +3780,42 @@ BoolResult TypeType::isExplicitlyConvertibleTo(Type const& _convertTo) const
 	return isImplicitlyConvertibleTo(_convertTo);
 }
 
+string UserDefinedValueTypeType::richIdentifier() const
+{
+	return "t_type" + identifierList(&actualType());
+}
+
+bool UserDefinedValueTypeType::operator==(Type const& _other) const
+{
+	if (_other.category() != category())
+		return false;
+	UserDefinedValueTypeType const& other = dynamic_cast<UserDefinedValueTypeType const&>(_other);
+	// TODO we also need to check for the definition
+	if (actualType() == other.actualType())
+		return false;
+
+	// TODO maybe only this check is necessary?
+	return other.userDefinedValueType().userDefinedValueTypeName() == m_userDefinedValueType.userDefinedValueTypeName();
+}
+
+u256 UserDefinedValueTypeType::storageSize() const
+{
+	return m_actualType.storageSize();
+}
+
+
+BoolResult UserDefinedValueTypeType::isExplicitlyConvertibleTo(Type const& _convertTo) const
+{
+	if (isImplicitlyConvertibleTo(_convertTo))
+		return true;
+	return _convertTo == m_actualType;
+}
+
+std::vector<std::tuple<std::string, Type const*>> UserDefinedValueTypeType::makeStackItems() const
+{
+	return m_actualType.stackItems();
+}
+
 ModifierType::ModifierType(ModifierDefinition const& _modifier)
 {
 	TypePointers params;

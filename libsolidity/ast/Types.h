@@ -176,7 +176,7 @@ public:
 		Address, Integer, RationalNumber, StringLiteral, Bool, FixedPoint, Array, ArraySlice,
 		FixedBytes, Contract, Struct, Function, Enum, Tuple,
 		Mapping, TypeType, Modifier, Magic, Module,
-		InaccessibleDynamic
+		InaccessibleDynamic, UserDefinedValueTypeType
 	};
 
 	/// @returns a pointer to _a or _b if the other is implicitly convertible to it or nullptr otherwise
@@ -1452,6 +1452,42 @@ protected:
 	std::vector<std::tuple<std::string, Type const*>> makeStackItems() const override;
 private:
 	Type const* m_actualType;
+};
+
+class UserDefinedValueTypeType: public Type
+{
+public:
+	explicit UserDefinedValueTypeType(
+		Type const& _actualType,
+		UserDefinedValueType const& _userDefinedValueType
+	):
+		m_actualType(_actualType),
+		m_userDefinedValueType(_userDefinedValueType)
+	{
+	}
+
+	Category category() const override { return Category::UserDefinedValueTypeType; }
+	Type const& actualType() const { return m_actualType; }
+	UserDefinedValueType const& userDefinedValueType() const { return m_userDefinedValueType; }
+
+	TypeResult binaryOperatorResult(Token, Type const*) const override { return nullptr; }
+	std::string richIdentifier() const override;
+	bool operator==(Type const& _other) const override;
+	// TODO check this
+	bool canBeStored() const override { return true;}
+	u256 storageSize() const override;
+
+	/// TODO
+	bool hasSimpleZeroValueInMemory() const override { return true; }
+	std::string toString(bool _short) const override { return "UserDefinedValueType(" + m_actualType.toString(_short) + ")"; }
+
+	BoolResult isExplicitlyConvertibleTo(Type const& _convertTo) const override;
+protected:
+	std::vector<std::tuple<std::string, Type const*>> makeStackItems() const override;
+
+private:
+	Type const& m_actualType;
+	UserDefinedValueType const& m_userDefinedValueType;
 };
 
 
