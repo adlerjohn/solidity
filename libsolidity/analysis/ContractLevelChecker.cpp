@@ -58,6 +58,8 @@ map<ASTString, vector<T const*>> filterDeclarations(
 	return filteredDeclarations;
 }
 
+
+
 }
 
 bool ContractLevelChecker::check(SourceUnit const& _sourceUnit)
@@ -71,6 +73,9 @@ bool ContractLevelChecker::check(SourceUnit const& _sourceUnit)
 	findDuplicateDefinitions(
 		filterDeclarations<EventDefinition>(*_sourceUnit.annotation().exportedSymbols)
 	);
+
+	// TODO need to check for duplicate user defined value types here.
+
 	if (!Error::containsOnlyWarnings(m_errorReporter.errors()))
 		noErrors = false;
 	for (ASTPointer<ASTNode> const& node: _sourceUnit.nodes())
