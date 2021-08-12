@@ -50,7 +50,8 @@ Declaration const* DeclarationContainer::conflictingDeclaration(
 	if (
 		dynamic_cast<FunctionDefinition const*>(&_declaration) ||
 		dynamic_cast<EventDefinition const*>(&_declaration) ||
-		dynamic_cast<MagicVariableDeclaration const*>(&_declaration)
+		dynamic_cast<MagicVariableDeclaration const*>(&_declaration) ||
+		dynamic_cast<UserDefinedValueType const*>(&_declaration)
 	)
 	{
 		// check that all other declarations are of the same kind (in which
@@ -70,6 +71,11 @@ Declaration const* DeclarationContainer::conflictingDeclaration(
 			if (
 				dynamic_cast<MagicVariableDeclaration const*>(&_declaration) &&
 				!dynamic_cast<MagicVariableDeclaration const*>(declaration)
+			)
+				return declaration;
+			if (
+				dynamic_cast<UserDefinedValueType const*>(&_declaration) &&
+				dynamic_cast<UserDefinedValueType const*>(&_declaration)
 			)
 				return declaration;
 			// Or, continue.
